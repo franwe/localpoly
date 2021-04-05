@@ -97,13 +97,7 @@ def create_and_validate_config(parsed_config: YAML = None) -> Config:
         app_config=AppConfig(**parsed_config.data),
         model_config=ModelConfig(**parsed_config.data),
     )
-
-    # add DATASET_DIR prefix
-    _config.app_config.rnd_input_data_file = DATASET_DIR / _config.app_config.rnd_input_data_file
-    _config.app_config.hd_input_data_file = DATASET_DIR / _config.app_config.hd_input_data_file
     return _config
 
 
 config = create_and_validate_config()
-
-a = 1
