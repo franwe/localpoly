@@ -1,0 +1,24 @@
+# Package Overview
+package_name: local_polynomial_regression
+
+pipeline_name: local_polynomial_regression
+pipeline_save_file: local_polynomial_regression_output
+
+# to set the random seed
+random_state: 1
+
+# the number of slices for CV bandwidth selection for local polynomial 
+# estimation
+n_slices: 15
+
+# kernel for estimation
+allowed_kernels:
+  - gaussian_kernel
+  - epanechnikov_kernel
+kernel: gaussian_kernel
+
+# loss function to be optimized
+allowed_loss_functions:
+  - ls
+  - MSE
+loss: MSE

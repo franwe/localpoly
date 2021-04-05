@@ -1,1 +1,1 @@
-# spd_trading
+# local_polynomial_regression

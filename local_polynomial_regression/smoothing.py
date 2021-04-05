@@ -1,30 +1,10 @@
-import numpy as np
-from scipy.stats import norm
-import scipy.interpolate as interpolate  # B-Spline
-
-# from sklearn.neighbors import KernelDensity
 import math
 import random
 import pandas as pd
+import numpy as np
 
-
-def chunks(lst, n):
-    """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(lst), n):
-        yield lst[i : i + n]
-
-
-# ----------------- with tau ------- Rookley + Haerdle (Applied Quant. Finance)
-def gaussian_kernel(x, Xi, h):
-    u = (x - Xi) / h
-    return norm.pdf(u)
-
-
-def epanechnikov(x, Xi, h):
-    u = (x - Xi) / h
-    indicator = np.where(abs(u) <= 1, 1, 0)
-    k = 0.75 * (1 - u ** 2)
-    return k * indicator
+from utils.helpers import chunks
+from utils.kernels import gaussian_kernel
 
 
 def local_polynomial_estimation(X, y, x, h, kernel):
@@ -191,15 +171,3 @@ def create_fit(
         first[i] = b1
         second[i] = b2
     return X_domain, fit, first, second, h
-
-
-def bspline(x, y, sections, degree=3):
-    idx = np.linspace(0, len(x) - 1, sections + 1, endpoint=True).round(0).astype("int")
-    x = x[idx]
-    y = y[idx]
-
-    t, c, k = interpolate.splrep(x, y, s=0, k=degree)
-    spline = interpolate.BSpline(t, c, k, extrapolate=True)
-    pars = {"t": t, "c": c, "deg": k}
-    points = {"x": x, "y": y}
-    return pars, spline, points
