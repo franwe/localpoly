@@ -107,93 +107,61 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
             "coarse results": coarse_results,
         }
 
-    def bandwidth_cv_slicing(self, list_of_bandwidths):
-        np.random.seed(1)
+    def sort_values_by_X(self, sampling_type):
+        np.random.seed(config.model_config.random_state)
         df = pd.DataFrame(data=self.y, index=self.X)
         df = df.sort_index()
         X = np.array(df.index)
         y = np.array(df[0])
         n = X.shape[0]
-        idx = list(range(0, n))
-        slices = list(chunks(idx, math.ceil(n / self.n_sections)))
-        if len(slices[0]) > 30:
-            samples = 30
+        if sampling_type == "random":
+            idx = list(range(0, n))
+            random.shuffle(idx)
+            print("random")
+        elif sampling_type == "slicing":
+            idx = list(range(0, n))
+            print("slicing")
+
+        X_sections = list(chunks(idx, math.ceil(n / self.n_sections)))
+        return X, y, X_sections
+
+    def bandwidth_cv_sampling(self, list_of_bandwidths):
+        X, y, X_sections = self.sort_values_by_X(self.sampling)
+        if len(X_sections[0]) > 30:
+            max_runs = 30
         else:
-            samples = len(slices[0])
+            max_runs = len(X_sections[0])
 
         num = len(list_of_bandwidths)
         mse_bw = np.zeros(num)  # for each bandwidth have mse - loss function
 
         # for bandwidth h in list_of_bandwidths
         for b, h in enumerate(list_of_bandwidths):
-            mse_slice = np.zeros(self.n_sections)
+            mse_section = np.zeros(self.n_sections)
             # take out chunks of our data and do leave-out-prediction
-            for i, chunk in enumerate(slices):
-                X_train, X_test = np.delete(X, chunk), X[chunk]
-                y_train, y_test = np.delete(y, chunk), y[chunk]
-
+            for i, section in enumerate(X_sections):
+                X_train, X_test = np.delete(X, section), X[section]
+                y_train, y_test = np.delete(y, section), y[section]
                 model = LocalPolynomialRegression(X_train, y_train, h, self.kernel_str, self.gridsize)
-                runs = min(samples, len(chunk))
+
+                runs = min(max_runs, len(section))
                 y_true = np.zeros(runs)
                 y_pred = np.zeros(runs)
                 mse_test = np.zeros(runs)
-                for j, idx_test in enumerate(random.sample(list(range(0, len(chunk))), runs)):
+                for j, idx_test in enumerate(random.sample(list(range(0, len(section))), runs)):
                     y_hat = model.local_polynomial_estimation(X_test[idx_test])[
                         0
                     ]  # use model.local_polynomial_estimation instead of model.fit, because we need the estimate for one point of X_test, not projected to X_est
+                    # assign values to y_true and y_pred arrays
                     y_true[j] = y_test[idx_test]
                     y_pred[j] = y_hat
                     mse_test[j] = (y_test[idx_test] - y_hat) ** 2
-                mse_slice[i] = 1 / runs * sum((y_true - y_pred) ** 2)
-            mse_bw[b] = 1 / self.n_sections * sum(mse_slice)
+                mse_section[i] = 1 / runs * sum((y_true - y_pred) ** 2)
+            mse_bw[b] = 1 / self.n_sections * sum(mse_section)
 
         results = {
             "bandwidths": list_of_bandwidths,
             "MSE": mse_bw,
             "h": list_of_bandwidths[mse_bw.argmin()],
-        }
-        return results
-
-    def bandwidth_cv_random(self, list_of_bandwidths):
-        np.random.seed(1)
-        df = pd.DataFrame(data=self.y, index=self.X)
-        df = df.sort_index()
-        X = np.array(df.index)
-        y = np.array(df[0])
-        n = X.shape[0]
-        idx = list(range(0, n))
-        random.shuffle(idx)
-        slices = list(chunks(idx, math.ceil(n / self.n_sections)))
-        if len(slices[0]) > 30:
-            samples = 30
-        else:
-            samples = len(slices[0])
-
-        num = len(list_of_bandwidths)
-        mase = np.zeros(num)
-
-        for b, h in enumerate(list_of_bandwidths):
-            mse = np.zeros(self.n_sections)
-            for i, chunk in enumerate(slices):
-                X_train, X_test = np.delete(X, chunk), X[chunk]
-                y_train, y_test = np.delete(y, chunk), y[chunk]
-                model = LocalPolynomialRegression(X_train, y_train, h, self.kernel_str, self.gridsize)
-
-                runs = min(samples, len(chunk))
-                mse_tmp = np.zeros(runs)
-                for j, idx_test in enumerate(random.sample(list(range(0, len(chunk))), runs)):
-
-                    y_pred = model.local_polynomial_estimation(X_test[idx_test])[
-                        0
-                    ]  # use model.local_polynomial_estimation instead of model.fit, because we need the estimate for one point of X_test, not projected to X_est
-
-                    mse_tmp[j] = (y_test[idx_test] - y_pred) ** 2
-                mse[i] = 1 / runs * sum(mse_tmp)
-            mase[b] = 1 / self.n_sections * sum(mse)
-
-        results = {
-            "bandwidths": list_of_bandwidths,
-            "MSE": mase,
-            "h": list_of_bandwidths[mase.argmin()],
         }
         return results

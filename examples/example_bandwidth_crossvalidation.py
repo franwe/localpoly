@@ -19,7 +19,7 @@ model_cv = LocalPolynomialRegressionCV(
     sampling="slicing",
 )
 
-results = model_cv.bandwidth_cv_random(np.linspace(0.4, 1.0, 10))
+results = model_cv.bandwidth_cv_sampling(np.linspace(0.4, 1.5, 10))
 
 print(f"Optimal bandwidth: {results['h']}")
 plt.plot(results["bandwidths"], results["MSE"])
