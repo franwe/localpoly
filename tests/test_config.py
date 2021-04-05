@@ -14,15 +14,20 @@ package_name: local_polynomial_regression
 pipeline_name: local_polynomial_regression
 pipeline_save_file: local_polynomial_regression_output
 random_state: 1
-n_slices: 15
+bandwidth: 0.75
+allowed_kernels:
+  - gaussian
+  - epanechnikov
+kernel: gaussian
+n_sections: 15
 allowed_loss_functions:
   - ls
   - MSE
 loss: MSE
-allowed_kernels:
-  - gaussian_kernel
-  - epanechnikov_kernel
-kernel: gaussian_kernel
+allowed_sampling_types:
+  - random
+  - slices
+sampling: slices
 """
 
 INVALID_TEST_CONFIG_TEXT = """
@@ -30,13 +35,17 @@ package_name: local_polynomial_regression
 pipeline_name: local_polynomial_regression
 pipeline_save_file: local_polynomial_regression_output
 random_state: 1
-n_slices: 15
+bandwidth: 0.75
+allowed_kernels:
+  - epanechnikov
+kernel: gaussian
+n_sections: 15
 allowed_loss_functions:
   - ls
 loss: MSE
-allowed_kernels:
-  - gaussian_kernel
-kernel: epanechnikov
+allowed_sampling_types:
+  - random
+sampling: slices
 """
 
 

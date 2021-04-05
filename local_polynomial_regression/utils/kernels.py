@@ -13,3 +13,6 @@ def epanechnikov_kernel(x, Xi, h):
     indicator = np.where(abs(u) <= 1, 1, 0)
     k = 0.75 * (1 - u ** 2)
     return k * indicator
+
+
+kernel_dict = {"gaussian": gaussian_kernel, "epanechnikov": epanechnikov_kernel}

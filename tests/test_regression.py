@@ -1,11 +1,16 @@
 from math import isclose
 
-from local_polynomial_regression.smoothing import create_fit
+from local_polynomial_regression.base import LocalPolynomialRegression
+from local_polynomial_regression.config.core import config
 
 
 def test_create_fit(test_data):
     X_test, y_test, y_real = test_data
-    X_est, y_est, first, second, h = create_fit(X_test, y_test, h=0.3)
+
+    model = LocalPolynomialRegression(
+        X=X_test, y=y_test, h=config.model_config.bandwidth, kernel=config.model_config.kernel, gridsize=100
+    )
+    X_est, y_est, first, second, h = model.fit()
 
     # X_domain similar range as X_sim
     x_tolerance = (X_test.max() - X_test.min()) / 50

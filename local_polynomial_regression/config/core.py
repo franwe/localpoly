@@ -30,13 +30,16 @@ class ModelConfig(BaseModel):
     """
 
     random_state: int
-    n_slices: int
+    bandwidth: float
+    allowed_kernels: t.Tuple[str, ...]
+    kernel: str
 
+    n_sections: int
     # the order is necessary for validation
     allowed_loss_functions: t.Tuple[str, ...]
     loss: str
-    allowed_kernels: t.Tuple[str, ...]
-    kernel: str
+    allowed_sampling_types: t.Tuple[str, ...]
+    sampling: str
 
     @validator("loss")
     def allowed_loss_function(cls, value, values):
