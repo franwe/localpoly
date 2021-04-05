@@ -89,10 +89,18 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
 
     def bandwidth_cv(
         self,
-        bandwidths_1,
+        list_of_bandwidths,
     ):
+        """[summary]
+
+        Args:
+            bandwidths (list): coarse list of bandwidths, it is suggested to give values around the Silverman bandwidth
+
+        Returns:
+            [dict]: fine results and coarse results of bandwidth search. results as in bandwdith_cv_sampling
+        """
         # 1) coarse parameter search
-        coarse_results = self.bandwidth_cv_slicing(X, y, bandwidths_1)
+        coarse_results = self.bandwidth_cv_sampling(list_of_bandwidths)
 
         # 2) fine parameter search, around minimum of first search
         bandwidths_1 = coarse_results["bandwidths"]
@@ -100,7 +108,7 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
         stepsize = bandwidths_1[1] - bandwidths_1[0]
         bandwidths_2 = np.linspace(h - (stepsize * 1.1), h + (stepsize * 1.1), 10)
 
-        fine_results = self.bandwidth_cv_slicing(X, y, bandwidths_2)
+        fine_results = self.bandwidth_cv_sampling(bandwidths_2)
 
         return {
             "fine results": fine_results,

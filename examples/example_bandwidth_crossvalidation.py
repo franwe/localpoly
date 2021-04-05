@@ -24,3 +24,9 @@ results = model_cv.bandwidth_cv_sampling(np.linspace(0.4, 1.5, 10))
 print(f"Optimal bandwidth: {results['h']}")
 plt.plot(results["bandwidths"], results["MSE"])
 plt.show()
+
+results = model_cv.bandwidth_cv(np.linspace(0.4, 1.5, 10))
+plt.plot(results["coarse results"]["bandwidths"], results["coarse results"]["MSE"])
+plt.plot(results["fine results"]["bandwidths"], results["fine results"]["MSE"])
+plt.show()
+a = 1

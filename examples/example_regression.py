@@ -5,12 +5,12 @@ from local_polynomial_regression.base import LocalPolynomialRegression
 
 # simulate data
 np.random.seed(1)
-X = np.linspace(-np.pi, np.pi, num=350)
+X = np.linspace(-np.pi, np.pi, num=150)
 y_real = np.sin(X)
 y = np.random.normal(0, 0.5, len(X)) + y_real
 
 # local polynomial regression
-model = LocalPolynomialRegression(X=X, y=y, h=0.88, kernel="gaussian", gridsize=100)
+model = LocalPolynomialRegression(X=X, y=y, h=1.011, kernel="gaussian", gridsize=100)
 X_est, y_est, first, second, h = model.fit()
 
 # plot
