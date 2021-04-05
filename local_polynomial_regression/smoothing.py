@@ -3,8 +3,19 @@ import random
 import pandas as pd
 import numpy as np
 
-from utils.helpers import chunks
-from utils.kernels import gaussian_kernel
+from .config.core import config
+from .utils.helpers import chunks
+from .utils.kernels import gaussian_kernel, epanechnikov_kernel
+
+
+def choose_kernel(kernel_str):
+    if kernel_str == "gaussian_kernel":
+        return gaussian_kernel
+    elif kernel_str == "epanechnikov_kernel":
+        return epanechnikov_kernel
+    else:
+        print("kernel unknow, use Gaussian Kernel")
+        return gaussian_kernel
 
 
 def local_polynomial_estimation(X, y, x, h, kernel):
@@ -37,8 +48,8 @@ def bandwidth_cv_slicing(
     y,
     x_bandwidth,
     smoothing=local_polynomial_estimation,
-    kernel=gaussian_kernel,
-    no_slices=15,
+    kernel=config.model_config.kernel,
+    n_slices=config.model_config.n_slices,
 ):
     np.random.seed(1)
     df = pd.DataFrame(data=y, index=X)
@@ -47,7 +58,7 @@ def bandwidth_cv_slicing(
     y = np.array(df[0])
     n = X.shape[0]
     idx = list(range(0, n))
-    slices = list(chunks(idx, math.ceil(n / no_slices)))
+    slices = list(chunks(idx, math.ceil(n / n_slices)))
     if len(slices[0]) > 30:
         samples = 30
     else:
@@ -57,7 +68,7 @@ def bandwidth_cv_slicing(
     mse_bw = np.zeros(num)  # for each bandwidth have mse - loss function
 
     for b, h in enumerate(x_bandwidth):
-        mse_slice = np.zeros(no_slices)
+        mse_slice = np.zeros(n_slices)
         for i, chunk in enumerate(slices):
             X_train, X_test = np.delete(X, chunk), X[chunk]
             y_train, y_test = np.delete(y, chunk), y[chunk]
@@ -72,7 +83,7 @@ def bandwidth_cv_slicing(
                 y_pred[j] = y_hat
                 mse_test[j] = (y_test[idx_test] - y_hat) ** 2
             mse_slice[i] = 1 / runs * sum((y_true - y_pred) ** 2)
-        mse_bw[b] = 1 / no_slices * sum(mse_slice)
+        mse_bw[b] = 1 / n_slices * sum(mse_slice)
 
     results = {
         "bandwidths": x_bandwidth,
@@ -87,8 +98,8 @@ def bandwidth_cv_random(
     y,
     x_bandwidth,
     smoothing=local_polynomial_estimation,
-    kernel=gaussian_kernel,
-    no_slices=30,
+    kernel=config.model_config.kernel,
+    n_slices=config.model_config.n_slices,
 ):
     np.random.seed(1)
     df = pd.DataFrame(data=y, index=X)
@@ -98,9 +109,9 @@ def bandwidth_cv_random(
     n = X.shape[0]
     idx = list(range(0, n))
     random.shuffle(idx)
-    slices = list(chunks(idx, math.ceil(n / no_slices)))
-    if len(slices[0]) > 50:
-        samples = 50
+    slices = list(chunks(idx, math.ceil(n / n_slices)))
+    if len(slices[0]) > 30:
+        samples = 30
     else:
         samples = len(slices[0])
 
@@ -108,7 +119,7 @@ def bandwidth_cv_random(
     mase = np.zeros(num)
 
     for b, h in enumerate(x_bandwidth):
-        mse = np.zeros(no_slices)
+        mse = np.zeros(n_slices)
         for i, chunk in enumerate(slices):
             X_train, X_test = np.delete(X, chunk), X[chunk]
             y_train, y_test = np.delete(y, chunk), y[chunk]
@@ -119,7 +130,7 @@ def bandwidth_cv_random(
                 y_pred = smoothing(X_train, y_train, X_test[idx_test], h, kernel)[0]
                 mse_tmp[j] = (y_test[idx_test] - y_pred) ** 2
             mse[i] = 1 / runs * sum(mse_tmp)
-        mase[b] = 1 / no_slices * sum(mse)
+        mase[b] = 1 / n_slices * sum(mse)
 
     results = {
         "bandwidths": x_bandwidth,
@@ -134,7 +145,7 @@ def bandwidth_cv(
     y,
     bandwidths_1,
     smoothing=local_polynomial_estimation,
-    kernel=gaussian_kernel,
+    kernel=config.model_config.kernel,
 ):
     # 1) coarse parameter search
     coarse_results = bandwidth_cv_slicing(X, y, bandwidths_1)
@@ -159,8 +170,10 @@ def create_fit(
     h,
     gridsize=100,
     smoothing=local_polynomial_estimation,
-    kernel=gaussian_kernel,
+    kernel_str=config.model_config.kernel,
 ):
+    kernel = choose_kernel(kernel_str)
+
     X_domain = np.linspace(X.min(), X.max(), gridsize)
     fit = np.zeros(len(X_domain))
     first = np.zeros(len(X_domain))

@@ -13,6 +13,6 @@ X_est, y_est, first, second, h = create_fit(X, y, h=0.4)
 
 # plot
 plt.scatter(X, y)
-plt.plot(X, y_real, "r", ":")
-plt.plot(X_est, y_est, "g")
+plt.plot(X, y_real, "grey", ls="--")
+plt.plot(X_est, y_est, "r")
 plt.show()
