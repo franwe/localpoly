@@ -1,10 +1,8 @@
-import math
 import random
-import pandas as pd
 import numpy as np
 
+from .utils.helpers import sort_values_by_X, create_partitions
 from .config.core import config
-from .utils.helpers import chunks
 from .utils.kernels import kernel_dict
 
 
@@ -30,6 +28,7 @@ class LocalPolynomialRegression:
         self.kernel_str = kernel
         self.kernel = kernel_dict[self.kernel_str]
         self.gridsize = gridsize
+        self.prediction_interval = (self.X.min(), self.X.max())
 
     def local_polynomial_estimation(self, x):
         n = self.X.shape[0]
@@ -55,8 +54,9 @@ class LocalPolynomialRegression:
         beta = np.linalg.pinv(XTWX).dot(XTWy)  # (3,1)
         return beta[0], beta[1], beta[2], W_hi
 
-    def fit(self):
-        X_domain = np.linspace(self.X.min(), self.X.max(), self.gridsize)
+    def fit(self, prediction_interval):
+        X_min, X_max = prediction_interval
+        X_domain = np.linspace(X_min, X_max, self.gridsize)
         fit = np.zeros(len(X_domain))
         first = np.zeros(len(X_domain))
         second = np.zeros(len(X_domain))
@@ -65,7 +65,7 @@ class LocalPolynomialRegression:
             fit[i] = b0
             first[i] = b1
             second[i] = b2
-        return X_domain, fit, first, second, self.h
+        return X_domain, fit, first, second, self.h  # TODO: remove h ?
 
 
 class LocalPolynomialRegressionCV(LocalPolynomialRegression):
@@ -89,7 +89,7 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
 
     def bandwidth_cv(
         self,
-        list_of_bandwidths,
+        coarse_list_of_bandwidths,
     ):
         """[summary]
 
@@ -100,72 +100,48 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
             [dict]: fine results and coarse results of bandwidth search. results as in bandwdith_cv_sampling
         """
         # 1) coarse parameter search
-        coarse_results = self.bandwidth_cv_sampling(list_of_bandwidths)
+        coarse_results = self.bandwidth_cv_sampling(coarse_list_of_bandwidths)
 
         # 2) fine parameter search, around minimum of first search
-        bandwidths_1 = coarse_results["bandwidths"]
-        h = coarse_results["h"]
-        stepsize = bandwidths_1[1] - bandwidths_1[0]
-        bandwidths_2 = np.linspace(h - (stepsize * 1.1), h + (stepsize * 1.1), 10)
+        coarse_h = coarse_results["h"]
+        stepsize = coarse_list_of_bandwidths[1] - coarse_list_of_bandwidths[0]
+        fine_list_of_bandwidths = np.linspace(coarse_h - (stepsize * 1.1), coarse_h + (stepsize * 1.1), 10)
 
-        fine_results = self.bandwidth_cv_sampling(bandwidths_2)
+        fine_results = self.bandwidth_cv_sampling(fine_list_of_bandwidths)
 
         return {
             "fine results": fine_results,
             "coarse results": coarse_results,
         }
 
-    def sort_values_by_X(self, sampling_type):
-        np.random.seed(config.model_config.random_state)
-        df = pd.DataFrame(data=self.y, index=self.X)
-        df = df.sort_index()
-        X = np.array(df.index)
-        y = np.array(df[0])
-        n = X.shape[0]
-        if sampling_type == "random":
-            idx = list(range(0, n))
-            random.shuffle(idx)
-            print("random")
-        elif sampling_type == "slicing":
-            idx = list(range(0, n))
-            print("slicing")
-
-        X_sections = list(chunks(idx, math.ceil(n / self.n_sections)))
-        return X, y, X_sections
-
     def bandwidth_cv_sampling(self, list_of_bandwidths):
-        X, y, X_sections = self.sort_values_by_X(self.sampling)
-        if len(X_sections[0]) > 30:
-            max_runs = 30
-        else:
-            max_runs = len(X_sections[0])
+        X_sorted, y_sorted = sort_values_by_X(self.X, self.y)
+        X_sections = create_partitions(X_sorted, y_sorted, self.n_sections, self.sampling)
+        max_comparisons_per_section = min(len(X_sections[0]), 30)
 
         num = len(list_of_bandwidths)
         mse_bw = np.zeros(num)  # for each bandwidth have mse - loss function
 
         # for bandwidth h in list_of_bandwidths
         for b, h in enumerate(list_of_bandwidths):
-            mse_section = np.zeros(self.n_sections)
             # take out chunks of our data and do leave-out-prediction
+            runs, mse = 0, 0
             for i, section in enumerate(X_sections):
-                X_train, X_test = np.delete(X, section), X[section]
-                y_train, y_test = np.delete(y, section), y[section]
+                X_train, X_test = np.delete(X_sorted, section), X_sorted[section]
+                y_train, y_test = np.delete(y_sorted, section), y_sorted[section]
                 model = LocalPolynomialRegression(X_train, y_train, h, self.kernel_str, self.gridsize)
+                X_est, y_est, first, second, h = model.fit(self.prediction_interval)
 
-                runs = min(max_runs, len(section))
-                y_true = np.zeros(runs)
-                y_pred = np.zeros(runs)
-                mse_test = np.zeros(runs)
-                for j, idx_test in enumerate(random.sample(list(range(0, len(section))), runs)):
-                    y_hat = model.local_polynomial_estimation(X_test[idx_test])[
-                        0
-                    ]  # use model.local_polynomial_estimation instead of model.fit, because we need the estimate for one point of X_test, not projected to X_est
-                    # assign values to y_true and y_pred arrays
-                    y_true[j] = y_test[idx_test]
-                    y_pred[j] = y_hat
-                    mse_test[j] = (y_test[idx_test] - y_hat) ** 2
-                mse_section[i] = 1 / runs * sum((y_true - y_pred) ** 2)
-            mse_bw[b] = 1 / self.n_sections * sum(mse_section)
+                max_section_comparison_length = min(len(X_test), max_comparisons_per_section)
+                random.seed(config.model_config.random_state)
+                for random_section_element in random.sample(range(len(X_test)), max_section_comparison_length):
+                    x, y = X_test[random_section_element], y_test[random_section_element]
+                    # compare to y_est to closest y_test
+                    nearest_x_idx = min(range(len(X_est)), key=lambda i: abs(X_est[i] - x))
+                    mse += (y - y_est[nearest_x_idx]) ** 2
+                    runs += 1
+
+            mse_bw[b] = 1 / runs * mse
 
         results = {
             "bandwidths": list_of_bandwidths,

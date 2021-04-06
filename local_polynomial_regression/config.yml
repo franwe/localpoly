@@ -8,7 +8,7 @@ pipeline_save_file: local_polynomial_regression_output
 random_state: 1
 
 # default bandwidth, only for testing purposes, needs to be optimized in production
-bandwidth: 0.75
+bandwidth: 1.0
 
 # kernel for estimation
 allowed_kernels:
@@ -30,4 +30,4 @@ loss: MSE
 allowed_sampling_types:
   - random
   - slices
-sampling: slices
+sampling: random

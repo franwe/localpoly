@@ -11,11 +11,16 @@ ROOT = PACKAGE_ROOT.parent
 
 @pytest.fixture
 def test_data():
-    X = np.linspace(-np.pi, np.pi, num=100)
-    y_real = np.sin(X)
     np.random.seed(config.model_config.random_state)
+    X = np.random.uniform(-np.pi, np.pi, size=150)
+    y_real = np.sin(X)
     y = np.random.normal(0, 1, len(X)) + y_real
     return X, y, y_real
+
+
+@pytest.fixture
+def list_of_bandwidths():
+    return np.linspace(0.4, 1.4, num=10)
 
 
 @pytest.fixture

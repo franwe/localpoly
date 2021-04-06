@@ -10,7 +10,8 @@ def test_create_fit(test_data):
     model = LocalPolynomialRegression(
         X=X_test, y=y_test, h=config.model_config.bandwidth, kernel=config.model_config.kernel, gridsize=100
     )
-    X_est, y_est, first, second, h = model.fit()
+    prediction_interval = (X_test.min(), X_test.max())
+    X_est, y_est, first, second, h = model.fit(prediction_interval)
 
     # X_domain similar range as X_sim
     x_tolerance = (X_test.max() - X_test.min()) / 50
