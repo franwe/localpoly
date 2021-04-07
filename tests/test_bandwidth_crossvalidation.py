@@ -22,7 +22,6 @@ def test_results_of_bandwidth_cv_sampling(test_data, list_of_bandwidths):
     model = LocalPolynomialRegressionCV(
         X=X_test,
         y=y_test,
-        h=config.model_config.bandwidth,
         kernel=config.model_config.kernel,
         n_sections=config.model_config.n_sections,
         loss=config.model_config.loss,
@@ -43,7 +42,6 @@ def test_results_of_bandwidth_cv(test_data, list_of_bandwidths):
     model = LocalPolynomialRegressionCV(
         X=X_test,
         y=y_test,
-        h=config.model_config.bandwidth,
         kernel=config.model_config.kernel,
         n_sections=config.model_config.n_sections,
         loss=config.model_config.loss,

@@ -73,7 +73,6 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
         self,
         X,
         y,
-        h,
         kernel=config.model_config.kernel,
         gridsize=100,
         n_sections=config.model_config.n_sections,
@@ -85,7 +84,7 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
         self.sampling = sampling
 
         # invoking the __init__ of the parent class
-        LocalPolynomialRegression.__init__(self, X, y, h, kernel, gridsize)
+        LocalPolynomialRegression.__init__(self, X=X, y=y, h=None, kernel=kernel, gridsize=gridsize)
 
     def bandwidth_cv(
         self,

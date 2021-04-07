@@ -13,7 +13,6 @@ y = np.random.normal(0, 0.3, len(X)) + y_real
 model_cv = LocalPolynomialRegressionCV(
     X=X,
     y=y,
-    h=0.75,
     kernel="gaussian",
     n_sections=15,
     loss="MSE",
