@@ -28,7 +28,7 @@ def test_results_of_bandwidth_cv_sampling(test_data, list_of_bandwidths):
         sampling=config.model_config.sampling,
     )
 
-    results = model.bandwidth_cv_sampling(list_of_bandwidths)
+    results = model._bandwidth_cv_sampling(list_of_bandwidths)
 
     assert results is not None
     for key in ["MSE", "bandwidths", "h"]:

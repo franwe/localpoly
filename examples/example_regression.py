@@ -12,10 +12,11 @@ y = np.random.normal(0, 0.3, len(X)) + y_real
 # local polynomial regression
 model = LocalPolynomialRegression(X=X, y=y, h=0.8469, kernel="gaussian", gridsize=100)
 prediction_interval = (X.min(), X.max())
-X_est, y_est, first, second, h = model.fit(prediction_interval)
+results = model.fit(prediction_interval)
 
 # plot
 plt.scatter(X, y)
-plt.plot(X, y_real, "grey", ls="--", alpha=0.5)
-plt.plot(X_est, y_est, "r", alpha=0.5)
+plt.plot(X, y_real, "grey", ls="--", alpha=0.5, label="function")
+plt.plot(results["X"], results["fit"], "r", alpha=0.9, label="fit")
+plt.legend()
 plt.show()

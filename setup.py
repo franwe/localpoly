@@ -8,5 +8,5 @@ setup(
     author_email="franziska.wehrmann@gmail.com",
     description="Performs local polynomial regression. Returns the fit and its first and second derivative.",
     packages=find_packages(),
-    install_requires=["numpy >= 1.11.1"],
+    install_requires=["numpy >= 1.11.1", "pandas", "pydantic", "strictyaml", "scipy"],
 )
