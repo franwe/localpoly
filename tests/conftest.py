@@ -1,9 +1,9 @@
 import pytest
 from pathlib import Path
 import numpy as np
-import local_polynomial_regression
+import localpoly
 
-PACKAGE_ROOT = Path(local_polynomial_regression.__file__).resolve().parent
+PACKAGE_ROOT = Path(localpoly.__file__).resolve().parent
 ROOT = PACKAGE_ROOT.parent
 RANDOM_STATE = 1
 

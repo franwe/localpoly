@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from local_polynomial_regression.base import LocalPolynomialRegression
+from localpoly.base import LocalPolynomialRegression
 
 # simulate data
 np.random.seed(1)

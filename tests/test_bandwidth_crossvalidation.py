@@ -1,5 +1,5 @@
 import math
-from local_polynomial_regression.base import LocalPolynomialRegressionCV
+from localpoly.base import LocalPolynomialRegressionCV
 
 
 def test_bandwidth_has_suitable_magnitude(test_data, list_of_bandwidths):

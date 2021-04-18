@@ -1,14 +1,14 @@
 from math import isclose
 
-from local_polynomial_regression.base import LocalPolynomialRegression
+from localpoly.base import LocalPolynomialRegression
 
 
-def test_local_polynomial_regression(test_data):
+def test_localpoly(test_data):
     X_test, y_test, y_real = test_data
 
     model = LocalPolynomialRegression(X=X_test, y=y_test, h=0.89, kernel="gaussian", gridsize=100)
     x = X_test.mean()
-    results = model.local_polynomial_regression(x)
+    results = model.localpoly(x)
 
     assert results is not None
     for key in ["fit", "first", "second", "weight"]:

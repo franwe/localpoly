@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from local_polynomial_regression.base import LocalPolynomialRegressionCV
+from localpoly.base import LocalPolynomialRegressionCV
 
 
 np.random.seed(1)
@@ -18,10 +18,12 @@ model_cv = LocalPolynomialRegressionCV(
     loss="MSE",
     sampling="random",
 )
-
-
-results = model_cv.bandwidth_cv(np.linspace(0.5, 1.5, 10))
+results = model_cv.bandwidth_cv(np.linspace(0.5, 1.0, 10))
 print(f"Optimal bandwidth: {results['fine results']['h']}")
-plt.plot(results["coarse results"]["bandwidths"], results["coarse results"]["MSE"])
-plt.plot(results["fine results"]["bandwidths"], results["fine results"]["MSE"])
+
+plt.plot(results["coarse results"]["bandwidths"], results["coarse results"]["MSE"], label="coarse bandwidths")
+plt.plot(results["fine results"]["bandwidths"], results["fine results"]["MSE"], label="fine bandwidths")
+plt.xlabel("Bandwidth")
+plt.ylabel("MSE")
+plt.legend()
 plt.show()

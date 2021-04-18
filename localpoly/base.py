@@ -30,7 +30,7 @@ class LocalPolynomialRegression:
         self.kernel = kernel_dict[self.kernel_str]
         self.gridsize = gridsize
 
-    def local_polynomial_regression(self, x):
+    def localpoly(self, x):
         """Calculates estimate for position x via Local Polynomial Regression.
 
         The usage of Local Polynomial Regression allows to not only calculate the estimate, but also its first and
@@ -89,7 +89,7 @@ class LocalPolynomialRegression:
         first = np.zeros(len(X_domain))
         second = np.zeros(len(X_domain))
         for i, x in enumerate(X_domain):
-            results = self.local_polynomial_regression(x)
+            results = self.localpoly(x)
             fit[i] = results["fit"]
             first[i] = results["first"]
             second[i] = results["second"]

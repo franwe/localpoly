@@ -1,1 +1,1 @@
-# local_polynomial_regression
+# localpoly
