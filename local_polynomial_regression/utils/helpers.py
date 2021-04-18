@@ -4,7 +4,7 @@ import math
 import random
 import scipy.interpolate as interpolate  # B-Spline
 
-from local_polynomial_regression.config.core import config
+RANDOM_STATE = 1
 
 
 def chunks(lst, n):
@@ -25,7 +25,7 @@ def create_partitions(X, y, n_sections, sampling_type):
     n = X.shape[0]
     if sampling_type == "random":
         idx = list(range(0, n))
-        random.seed(config.model_config.random_state)  # not np.random.seed !!!
+        random.seed(RANDOM_STATE)  # not np.random.seed !!!
         random.shuffle(idx)
     elif sampling_type == "slicing":
         idx = list(range(0, n))

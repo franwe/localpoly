@@ -2,8 +2,9 @@ import random
 import numpy as np
 
 from .utils.helpers import sort_values_by_X, create_partitions
-from .config.core import config
 from .utils.kernels import kernel_dict
+
+RANDOM_STATE = 1
 
 
 class LocalPolynomialRegression:
@@ -21,7 +22,7 @@ class LocalPolynomialRegression:
         kernel_str: the name of the kernel as a string "gaussian"
     """
 
-    def __init__(self, X, y, h, kernel=config.model_config.kernel, gridsize=100):
+    def __init__(self, X, y, h, kernel="gaussian", gridsize=100):
         self.X = X
         self.y = y
         self.h = h
@@ -73,7 +74,14 @@ class LocalPolynomialRegression:
 
         Returns:
             dict: Results of the fit. The estimated function (fit) in the prediction interval (X) and its first and
-            second derivative.
+            second derivative::
+
+                {
+                    'X' : X_domain,    # prediction interval of fit
+                    'fit': fit,        # fit of the function at point x
+                    'first': first,    # first derivative at point x
+                    'second': second,  # second derivative at point x
+                }
         """
         X_min, X_max = prediction_interval
         X_domain = np.linspace(X_min, X_max, self.gridsize)
@@ -94,27 +102,28 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
     LocalPolynomialRegressionCV performs the parameter optimization for LocalPolynomialRegression. The optimal Bandwidth
     highly depends on the data (X, y) and the kernel.
 
-    Parameters:
-        X: X-values of data that is to be fitted (explanatory variable)
-        y: y-values of data that is to be fitted (observations)
-        kernel_str: the name of the kernel as a string (default: "gaussian")
-        gridsize: desired size of the fit (granularity, default: 100)
-        n_sections: the amount of sections to devide the dataset in cross valdiation (k-folds, default: 15)
-        loss: the loss function for optimization (default: MSE)
-        sampling: whether the dataset should be partitioned "random" or as "slicing" (default: "random")
+    Args:
+        X (np.array): X-values of data that is to be fitted (explanatory variable)
+        y (np.array): y-values of data that is to be fitted (observations)
+        kernel (str, optional): Name of the kernel. Defaults to "gaussian".
+        gridsize (int, optional): Desired size of the fit - granularity. Defaults to 100.
+        n_sections (int, optional): Amount of sections to devide the dataset in cross validation (k-folds). Defaults to 10.
+        loss (str, optional): Loss function for optimization. Defaults to "MSE".
+        sampling (str, optional): Whether the dataset should be partitioned "random" or as "slicing". Defaults to "random".
+
     Attributes:
-        prediction_interval_: Interval in which to calculate the estimates, automatically set to (X.min(), X.max())
+        prediction_interval: Interval in which to calculate the estimates, automatically set to (X.min(), X.max())
     """
 
     def __init__(
         self,
         X,
         y,
-        kernel=config.model_config.kernel,
+        kernel="gaussian",
         gridsize=100,
-        n_sections=config.model_config.n_sections,
-        loss=config.model_config.loss,
-        sampling=config.model_config.sampling,
+        n_sections=10,
+        loss="MSE",
+        sampling="random",
     ):
         self.n_sections = n_sections
         self.loss = loss
@@ -130,14 +139,25 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
     ):
         """Cross Validation for Bandwidth optimization.
 
-        The CV Routine is performed twice. First, for a coarse list of bandwidths, then on a finer grid which spans
-        around the first optimal value.
+        The CV Routine is performed twice. First, for a ``coarse_list_of_bandwidths``, then on a finer grid which spans
+        around the first optimal value, ``fine_list_of_bandwidths``.
 
         Args:
-            bandwidths (list): coarse list of bandwidths, it is suggested to give values around the Silverman bandwidth
+            coarse_list_of_bandwidths (list): coarse list of bandwidths, it is suggested to give values around the Silverman bandwidth
 
         Returns:
-            dict: fine results and coarse results of bandwidth search. results as in _bandwdith_cv_sampling
+            dict: fine results and coarse results of bandwidth search::
+
+                {
+                    "fine results": {
+                        "bandwidths": fine_list_of_bandwidths,
+                        "MSE": # mean squared errors for bandwidths,
+                        "h": # optimal bandwidth within fine_list_of_bandwidths,
+                    },
+                    "coarse results": {
+                        # ... same as above but with coarse_list_of_bandwidths
+                    },
+                }
         """
         # 1) coarse parameter search
         coarse_results = self._bandwidth_cv_sampling(coarse_list_of_bandwidths)
@@ -183,7 +203,7 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
                 results = model.fit(self.prediction_interval_)
 
                 max_section_comparison_length = min(len(X_test), max_comparisons_per_section)
-                random.seed(config.model_config.random_state)
+                random.seed(RANDOM_STATE)
                 for random_section_element in random.sample(range(len(X_test)), max_section_comparison_length):
                     x, y = X_test[random_section_element], y_test[random_section_element]
                     # compare to results["fit"] to closest y_test

@@ -1,15 +1,12 @@
 from math import isclose
 
 from local_polynomial_regression.base import LocalPolynomialRegression
-from local_polynomial_regression.config.core import config
 
 
 def test_local_polynomial_regression(test_data):
     X_test, y_test, y_real = test_data
 
-    model = LocalPolynomialRegression(
-        X=X_test, y=y_test, h=config.model_config.bandwidth, kernel=config.model_config.kernel, gridsize=100
-    )
+    model = LocalPolynomialRegression(X=X_test, y=y_test, h=0.89, kernel="gaussian", gridsize=100)
     x = X_test.mean()
     results = model.local_polynomial_regression(x)
 
@@ -22,9 +19,7 @@ def test_local_polynomial_regression(test_data):
 def test_create_fit(test_data):
     X_test, y_test, y_real = test_data
 
-    model = LocalPolynomialRegression(
-        X=X_test, y=y_test, h=config.model_config.bandwidth, kernel=config.model_config.kernel, gridsize=100
-    )
+    model = LocalPolynomialRegression(X=X_test, y=y_test, h=0.89, kernel="gaussian", gridsize=100)
     prediction_interval = (X_test.min(), X_test.max())
     results = model.fit(prediction_interval)
     assert results is not None

@@ -1,6 +1,5 @@
 import math
 from local_polynomial_regression.base import LocalPolynomialRegressionCV
-from local_polynomial_regression.config.core import config
 
 
 def test_bandwidth_has_suitable_magnitude(test_data, list_of_bandwidths):
@@ -22,10 +21,10 @@ def test_results_of_bandwidth_cv_sampling(test_data, list_of_bandwidths):
     model = LocalPolynomialRegressionCV(
         X=X_test,
         y=y_test,
-        kernel=config.model_config.kernel,
-        n_sections=config.model_config.n_sections,
-        loss=config.model_config.loss,
-        sampling=config.model_config.sampling,
+        kernel="gaussian",
+        n_sections=3,
+        loss="MSE",
+        sampling="random",
     )
 
     results = model._bandwidth_cv_sampling(list_of_bandwidths)
@@ -42,10 +41,10 @@ def test_results_of_bandwidth_cv(test_data, list_of_bandwidths):
     model = LocalPolynomialRegressionCV(
         X=X_test,
         y=y_test,
-        kernel=config.model_config.kernel,
-        n_sections=config.model_config.n_sections,
-        loss=config.model_config.loss,
-        sampling=config.model_config.sampling,
+        kernel="gaussian",
+        n_sections=3,
+        loss="MSE",
+        sampling="random",
     )
 
     results = model.bandwidth_cv(list_of_bandwidths)
