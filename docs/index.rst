@@ -14,8 +14,6 @@ Welcome to localpoly's documentation!
    Theoretical Background <text/theory>
    Install <text/install>
    Examples <text/examples>
-   .. Authors <authors>
-   .. Changelog <changelog>
    Module Reference <api/modules>
    License <license>
 
