@@ -1,5 +1,5 @@
-local\_polynomial\_regression package
-=====================================
+localpoly package
+=================
 
 Subpackages
 -----------
@@ -12,8 +12,8 @@ Subpackages
 Submodules
 ----------
 
-local\_polynomial\_regression.base module
------------------------------------------
+localpoly.base module
+---------------------
 
 .. automodule:: localpoly.base
    :members:

@@ -1,19 +1,19 @@
-local\_polynomial\_regression.utils package
-===========================================
+localpoly.utils package
+=======================
 
 Submodules
 ----------
 
-local\_polynomial\_regression.utils.helpers module
---------------------------------------------------
+localpoly.utils.helpers module
+------------------------------
 
 .. automodule:: localpoly.utils.helpers
    :members:
    :undoc-members:
    :show-inheritance:
 
-local\_polynomial\_regression.utils.kernels module
---------------------------------------------------
+localpoly.utils.kernels module
+------------------------------
 
 .. automodule:: localpoly.utils.kernels
    :members:
