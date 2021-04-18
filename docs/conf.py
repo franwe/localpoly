@@ -15,9 +15,10 @@ import shutil
 from pkg_resources import get_distribution
 
 # Get version information for the package documentation
-# which is published on read the docs: https://localpoly-python.readthedocs.io/en/latest/
-release = get_distribution("localpoly").version
-version = ".".join(release.split(".")[:2])
+# which is published on read the docs: https://localpoly.readthedocs.io/en/latest/
+# release = get_distribution("localpoly").version
+# version = ".".join(release.split(".")[:2])
+version = "0.1.0"
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe())))
 

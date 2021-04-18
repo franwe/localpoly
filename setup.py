@@ -11,6 +11,10 @@ setup(
     name="localpoly",
     version="0.1.0",
     url="https://github.com/franwe/localpoly",
+    project_urls={
+        Documentation = "https://localpoly.readthedocs.io/en/latest/",
+        Code = "https://github.com/franwe/localpoly"
+    }
     author="Franziska Wehrmann",
     author_email="franziska.wehrmann@gmail.com",
     description="Performs Local Polynomial Regression.",
