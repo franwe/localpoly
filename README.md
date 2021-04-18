@@ -10,17 +10,17 @@ Read the documentation for the theoretical background and examples.
 
 Via pip
 ```
-    $ pip install localpoly
+    pip install localpoly
 ```
 
 Or via download from git:
 
 ```
-    $ pip install git+https://github.com/franwe/localpoly#egg=localpoly
+    pip install git+https://github.com/franwe/localpoly#egg=localpoly
 ```
 
 Note that in order to avoid potential conflicts with other packages it is strongly recommended to use a virtual environment (venv) or a conda environment.
 
-![alt text][logo]
+![alt text][example fit]
 
-[logo]: docs/_static/example_fit.png "Example fit"
+[example fit]: docs/_static/example_fit.png "Example fit"
