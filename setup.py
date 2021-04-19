@@ -15,7 +15,7 @@ setup(
         "Documentation" : "https://localpoly.readthedocs.io/en/latest/",
         "Code" : "https://github.com/franwe/localpoly"
     },
-    author="Franziska Wehrmann",
+    author="franwe",
     author_email="franziska.wehrmann@gmail.com",
     description="Performs Local Polynomial Regression.",
     long_description=README,
