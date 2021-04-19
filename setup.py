@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="localpoly",
-    version="0.1.0",
+    version="0.1.1",
     url="https://github.com/franwe/localpoly",
     project_urls={
         "Documentation" : "https://localpoly.readthedocs.io/en/latest/",
