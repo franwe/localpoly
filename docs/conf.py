@@ -29,7 +29,7 @@ print("my location: ", __location__)
 # sys.path.insert(0, os.path.abspath("."))
 
 sys.path.insert(0, os.path.abspath('./../'))
-autodoc_mock_imports = ["utils"]
+autodoc_mock_imports = [".", "utils"]
 
 # -- Run sphinx-apidoc ------------------------------------------------------
 # This hack is necessary since RTD does not issue `sphinx-apidoc` before running
