@@ -18,16 +18,16 @@ from pkg_resources import get_distribution
 # which is published on read the docs: https://localpoly.readthedocs.io/en/latest/
 # release = get_distribution("localpoly").version
 # version = ".".join(release.split(".")[:2])
-version = "0.1.1"
+version = "0.1.2"
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe())))
 
-print("my location: ", __location__)
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('./../'))
+sys.path.insert(0, os.path.join(__location__, ".."))
 autodoc_mock_imports = [".", "utils"]
+exclude_patterns = ["**setup**"]
 
 # -- Run sphinx-apidoc ------------------------------------------------------
 # This hack is necessary since RTD does not issue `sphinx-apidoc` before running
@@ -42,8 +42,9 @@ try:  # for Sphinx >= 1.7
 except ImportError:
     from sphinx import apidoc
 
-output_dir = os.path.join(__location__, "../localpoly/docs/api")
-module_dir = os.path.join(__location__, "../localpoly")
+output_dir = os.path.join(__location__, "../docs/api")
+module_dir = os.path.normpath(__location__ + os.sep + os.pardir)
+
 try:
     shutil.rmtree(output_dir)
 except FileNotFoundError:

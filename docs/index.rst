@@ -15,7 +15,7 @@ Welcome to localpoly's documentation!
    Install <text/install>
    Examples <text/examples>
    Module Reference <api/modules>
-   License <license>
+   License <text/license>
 
 
 

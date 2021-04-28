@@ -5,3 +5,4 @@ localpoly
    :maxdepth: 4
 
    localpoly
+   setup
