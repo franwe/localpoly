@@ -21,6 +21,4 @@ Or via download from git:
 
 Note that in order to avoid potential conflicts with other packages it is strongly recommended to use a virtual environment (venv) or a conda environment.
 
-![See image in README.md in GitHub repo.][example fit]
-
-[example fit]: docs/_static/example_fit.png "Example fit"
+![See image in README.md in GitHub repo.](https://github.com/franwe/localpoly/blob/main/docs/_static/example_fit.png?raw=true)
