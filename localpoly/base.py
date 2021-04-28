@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from sklearn.neighbors import NearestNeighbors
 
 from .utils.helpers import sort_values_by_X, create_partitions
 from .utils.kernels import kernel_dict
@@ -199,16 +200,14 @@ class LocalPolynomialRegressionCV(LocalPolynomialRegression):
             for i, section in enumerate(X_sections):
                 X_train, X_test = np.delete(X_sorted, section), X_sorted[section]
                 y_train, y_test = np.delete(y_sorted, section), y_sorted[section]
-                model = LocalPolynomialRegression(X_train, y_train, h, self.kernel_str, self.gridsize)
-                results = model.fit(self.prediction_interval_)
-
                 max_section_comparison_length = min(len(X_test), max_comparisons_per_section)
+                model = LocalPolynomialRegression(X_train, y_train, h, self.kernel_str, self.gridsize)
                 random.seed(RANDOM_STATE)
-                for random_section_element in random.sample(range(len(X_test)), max_section_comparison_length):
-                    x, y = X_test[random_section_element], y_test[random_section_element]
-                    # compare to results["fit"] to closest y_test
-                    nearest_x_idx = min(range(len(results["X"])), key=lambda i: abs(results["X"][i] - x))
-                    mse += (y - results["fit"][nearest_x_idx]) ** 2
+                # for random y in y_test, extimate y_hat and calculate mse
+                for idx_test in random.sample(range(len(X_test)), max_section_comparison_length):
+                    y_hat = model.localpoly(X_test[idx_test])["fit"]
+                    y_true = y_test[idx_test]
+                    mse += (y_true - y_hat) ** 2
                     runs += 1
 
             mse_bw[b] = 1 / runs * mse

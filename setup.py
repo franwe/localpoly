@@ -9,11 +9,11 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="localpoly",
-    version="0.1.2",
+    version="0.1.3",
     url="https://github.com/franwe/localpoly",
     project_urls={
-        "Documentation" : "https://localpoly.readthedocs.io/en/latest/",
-        "Code" : "https://github.com/franwe/localpoly"
+        "Documentation": "https://localpoly.readthedocs.io/en/latest/",
+        "Code": "https://github.com/franwe/localpoly",
     },
     author="franwe",
     author_email="franziska.wehrmann@gmail.com",
@@ -22,6 +22,6 @@ setup(
     long_description_content_type="text/markdown",
     license="MIT",
     packages=find_packages(),
-    python_requires='>=3',
+    python_requires=">=3",
     install_requires=["numpy", "pandas", "scipy"],
 )

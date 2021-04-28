@@ -18,7 +18,7 @@ from pkg_resources import get_distribution
 # which is published on read the docs: https://localpoly.readthedocs.io/en/latest/
 # release = get_distribution("localpoly").version
 # version = ".".join(release.split(".")[:2])
-version = "0.1.2"
+version = "0.1.3"
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe())))
 
@@ -177,10 +177,10 @@ html_theme_options = {
 }
 
 html_context = {
-  'display_github': True,
-  'github_user': 'buskill',
-  'github_repo': 'buskill-app',
-  'github_version': 'master/docs/',
+    "display_github": True,
+    "github_user": "buskill",
+    "github_repo": "buskill-app",
+    "github_version": "master/docs/",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
