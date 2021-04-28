@@ -1,6 +1,5 @@
 import random
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
 
 from .utils.helpers import sort_values_by_X, create_partitions
 from .utils.kernels import kernel_dict
