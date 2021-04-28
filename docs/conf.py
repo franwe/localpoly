@@ -18,7 +18,7 @@ from pkg_resources import get_distribution
 # which is published on read the docs: https://localpoly.readthedocs.io/en/latest/
 # release = get_distribution("localpoly").version
 # version = ".".join(release.split(".")[:2])
-version = "0.1.3"
+version = "0.1.4"
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe())))
 
