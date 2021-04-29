@@ -72,3 +72,8 @@ The minimization problem is solved by the weighted least squares estimator :math
 
 The combination of these three key components lead the the term **Local Polynomial Regression**
 (local: Weights/Kernel, polynomial: Taylor expansion, where the function is represented in polynomials, regression: Least Squared Regression).
+
+Resources:
+----------
+
+.. [1] Nonparametric and Semiparametric Models - Chapter: Nonparametric Regression - W. K. Haerdle - Springer Berlin Heidelberg - 2004
