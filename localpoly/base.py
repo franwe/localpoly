@@ -41,7 +41,9 @@ class LocalPolynomialRegression:
 
         Returns:
             dict: Results of regression. The estimated value for point x, its first and second derivative in this point
-            and the weight vector of the influence of the surrounding points.
+            and the weight vector of the influence of the surrounding points.::
+
+                {"fit": beta[0], "first": beta[1], "second": beta[2], "weight": W_hi}
         """
         n = self.X.shape[0]
         K_i = 1 / self.h * self.kernel(x, self.X, self.h)
